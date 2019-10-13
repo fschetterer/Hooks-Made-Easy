@@ -3,7 +3,6 @@ unit Unit1;
 interface
 
 uses
-  Jwa,
   Winapi.Windows, Winapi.Messages,
   System.Classes, System.Actions, System.SysUtils,
   Vcl.Forms, Vcl.ActnList, Vcl.StdCtrls, Vcl.Controls,
@@ -27,7 +26,7 @@ type
     procedure btHookupClick(Sender: TObject);
     procedure btStopClick(Sender: TObject);
   protected
-    procedure WMHOOKMSG(var Msg: TMessage); message WM_HOOKMSG;
+    procedure APPHOOKMSG(var Msg: TMessage); message APP_HOOKMSG;
   end;
 
 var
@@ -50,7 +49,7 @@ uses HooksMadeEasy.GetMsg;
 procedure TForm1.FormCreate(Sender: TObject);
 begin
   // Enable/Disable Messaging from non elevated Apps
-  ChangeWindowMessageFilterEx(Handle, WM_HOOKMSG, MSGFLT_ALLOW, nil);
+  ChangeWindowMessageFilterEx(Handle, APP_HOOKMSG, MSGFLT_ALLOW, nil);
 end;
 
 procedure TForm1.aiOnIdleUpdate(Sender: TObject);
@@ -79,7 +78,7 @@ begin
   caption := SysErrorMessage(GetLastError);
 end;
 
-procedure TForm1.WMHOOKMSG(var Msg: TMessage);
+procedure TForm1.APPHOOKMSG(var Msg: TMessage);
   procedure AddToList(s: string; lParam : LPARAM);
   begin
      with ListBox1 do

@@ -24,7 +24,7 @@
 
 /// <summary>
 ///   <para>
-///     Allows recording Macros.
+///     Hooks all messages posted via PostMessage
 ///   </para>
 ///   <para>
 ///     Written using only Win API and System methods
@@ -46,11 +46,8 @@
 ///       "UAC Bypass UI Protection" requires the App to be under %ProgramFiles%
 ///     </item>
 ///   </list>
-///   In Berlin you need to use a custom manifest: "%DFX%\UAC.manifests\UAC.requireAdministrator.uiAccess.manifest"
+///   In Berlin you need to use a custom manifest: "UAC.requireAdministrator.uiAccess.manifest"
 /// </remarks>
-/// <seealso href="https://edn.embarcadero.com/print/10323">
-///   Working Demo
-/// </seealso>
 unit HooksMadeEasy.GetMsg;
 
 interface
@@ -117,7 +114,7 @@ begin
     ///   To obtain the correct result when testing the value of wParam, an application must
     ///   combine the value 0xFFF0 with the wParam value by using the bitwise AND operator.
     /// </remarks>
-    if PostMessage(m_HookData.FHwnd, WM_HOOKMSG, (lpMsg.wParam and $FFF0), lpMsg.lParam) then
+    if PostMessage(m_HookData.FHwnd, APP_HOOKMSG, (lpMsg.wParam and $FFF0), lpMsg.lParam) then
       MessageBeep(0);
   end;
 end;

@@ -30,7 +30,7 @@ unit HooksMadeEasy.Common;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages,
+  Winapi.Windows, Winapi.Messages, Winapi.PsApi,
   System.SysUtils, System.Classes;
 
 type
@@ -59,8 +59,27 @@ type
   end;
 
 const
-  WM_HOOKMSG = WM_APP + 101;
-  cGetMsgMapFile = '{D9158F23-ED53-470E-B029-15C9E0A06023}.{B1548FFC-07BC-4560-B953-DCCE35A482EB}';
+  APP_HOOKMSG     = WM_APP + 101;
+  cGetMsgMapFile  = '{D9158F23-ED53-470E-B029-15C9E0A06023}.{B1548FFC-07BC-4560-B953-DCCE35A482EB}';
+
+const
+  MSGFLT_ALLOW    = 1;
+  MSGFLT_DISALLOW = 2;
+  MSGFLT_RESET    = 0;
+
+type
+ {$MINENUMSIZE 4 DWORD}
+ PCHANGEFILTERSTRUCT = ^CHANGEFILTERSTRUCT;
+ CHANGEFILTERSTRUCT = record
+  cbSize : DWORD;
+  ExtStatus {DWORD} : (MSGFLTINFO_NONE, MSGFLTINFO_ALREADYALLOWED_FORWND, MSGFLTINFO_ALREADYDISALLOWED_FORWND, MSGFLTINFO_ALLOWED_HIGHER);
+end;
+
+/// <remarks>
+///   Windows 7 and up
+/// </remarks>
+function ChangeWindowMessageFilterEx(hWnd : THandle; Msg : UINT; dwFlag: DWORD; lpChangeFilterStruct : PCHANGEFILTERSTRUCT): BOOL; stdcall; external user32;
+
 
 implementation
 
