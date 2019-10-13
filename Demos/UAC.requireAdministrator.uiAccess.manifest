@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+  <assemblyIdentity version="1.0.0.0" processorArchitecture="*" name="MyApp" type="win32"/>
+  <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+    <security>
+      <requestedPrivileges>
+        <!-- To send/post messages to apps running at privilege levels above ours: -->
+        <!-- 1.  uiAccess="true" -->
+        <!-- 2.  Code MUST be digitally signed -->
+        <!-- 3.  Your application MUST reside in a trusted location (e.g.; Program Files) -->
+        <!-- 4.  App must be installed by Elevated Installer -->
+        <requestedExecutionLevel
+            level="requireAdministrator"
+            uiAccess="true"
+         />
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+</assembly>
