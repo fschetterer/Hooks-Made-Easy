@@ -37,7 +37,7 @@ implementation
 {$R *.dfm}
 
 {$IFDEF USEDLL}
-const HooksDLL = ''JournalHooks.DLL';
+const HooksDLL = 'JournalHooks.DLL';
 function HookActive: Boolean; external HooksDLL;
 function StartRecording: Boolean; external HooksDLL;
 function StartPlayback(const InstantPlayback: Boolean): Boolean; external HooksDLL;
