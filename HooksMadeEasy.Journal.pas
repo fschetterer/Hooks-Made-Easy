@@ -62,6 +62,30 @@ uses
 
 type
   /// <summary>
+  ///  Wrapper around GetTickCount (instead of Winapi.MMSystem.TimeGetTime)
+  /// </summary>
+  /// <seealso href="https://www.thedelphigeek.com/2007/10/calculating-accurate.html">
+  ///    Started with: Calculating accurate 'Now'
+  /// </seealso>
+  TTicks = record
+{$REGION 'History'}
+//  13-Oct-2019 - This is a class helper in Berlin but works as a record in XE2
+{$ENDREGION}
+    class constructor Create;
+  private
+    FTicks: Uint64;
+    class var FNowHigh32, FNowLastLow32 : Cardinal;
+    /// <summary>
+    ///   Increments FNowHigh32 for each wrap around, 49.71 days uptime
+    /// </summary>
+    class function Now64: Uint64; static;
+  public
+    function ElapsedMS: Cardinal;
+    function RemainingMS(const ATimeOutMS: Cardinal): Cardinal;
+    procedure StartNew;
+  end;
+
+  /// <summary>
   ///   Works both with and without a DLL
   /// </summary>
   /// <remarks>
@@ -277,6 +301,50 @@ begin
   FSysModalOn := False;
   FDelayMS := 0;
   FillChar(FEventMsg, SizeOf(FEventMsg), 0);
+end;
+
+{ TTicks }
+
+class constructor TTicks.Create;
+begin
+  inherited;
+  FNowHigh32 := 0;
+  FNowLastLow32 := 0;
+end;
+
+class function TTicks.Now64: Uint64;
+var Rsl : Int64Rec absolute Result;
+begin
+  Rsl.Lo := GetTickCount;
+  if Rsl.Lo < FNowLastLow32 then Inc(FNowHigh32);
+  FNowLastLow32 := Rsl.Lo;
+  Rsl.Hi := FNowHigh32;
+end;
+
+function TTicks.ElapsedMS: Cardinal;
+var LTicks, LValue: Uint64;
+begin
+  LTicks := TTicks.Now64;
+  LValue := LTicks - FTicks;
+  if (LValue < 0) then Result := 0
+  else if (LValue > MAXDWORD) then Result := MAXDWORD
+  else Result := LValue;
+end;
+
+function TTicks.RemainingMS(const ATimeOutMS: Cardinal): Cardinal;
+var LValue: Cardinal;
+begin
+  if (ATimeOutMS = INFINITE) then Exit(INFINITE);
+  if (ATimeOutMS = 0) then Exit(0);  // Can be Zero if testing a Wait State
+
+  LValue := ElapsedMS;
+  if (ATimeOutMS <= LValue) then Exit(0)
+  else Result := ATimeOutMS - LValue;
+end;
+
+procedure TTicks.StartNew;
+begin
+  FTicks := TTicks.Now64;
 end;
 
 end.

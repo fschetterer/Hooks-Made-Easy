@@ -22,35 +22,23 @@
   SOFTWARE.
 **********************************************************************************************}
 
-/// <summary>
-///   Helpers and Constants
-/// </summary>
-unit HooksMadeEasy.Common;
-
-interface
+Library Hook;
 
 uses
-  Winapi.Windows, Winapi.Messages;
+  Winapi.Windows,
+  HooksMadeEasy.InjectApi;
 
-const
-  MSGFLT_ALLOW    = 1;
-  MSGFLT_DISALLOW = 2;
-  MSGFLT_RESET    = 0;
-
-type
- {$MINENUMSIZE 4 DWORD}
- PCHANGEFILTERSTRUCT = ^CHANGEFILTERSTRUCT;
- CHANGEFILTERSTRUCT = record
-  cbSize : DWORD;
-  ExtStatus {DWORD} : (MSGFLTINFO_NONE, MSGFLTINFO_ALREADYALLOWED_FORWND, MSGFLTINFO_ALREADYDISALLOWED_FORWND, MSGFLTINFO_ALLOWED_HIGHER);
+/// <summary>
+///   Eporting this will call the record's class constructor
+///   for each instance loaded into a process
+/// </summary>
+function HookActive: Boolean;
+begin
+  Result := TInjectApi.Active;
 end;
 
-/// <remarks>
-///   Windows 7 and up
-/// </remarks>
-function ChangeWindowMessageFilterEx(hWnd : THandle; Msg : UINT; dwFlag: DWORD; lpChangeFilterStruct : PCHANGEFILTERSTRUCT): BOOL; stdcall; external user32;
+Exports
+   HookActive;
 
-implementation
-
-
+begin
 end.

@@ -25,8 +25,7 @@
 library GetMsgHooks;
 
 uses
-  WinApi.Windows,
-  WinApi.Messages,
+  WinApi.Windows, WinApi.Messages,
   HooksMadeEasy.GetMsg;
 
 function Hookup(AHandle: THandle; AThreadId: Cardinal): Boolean;

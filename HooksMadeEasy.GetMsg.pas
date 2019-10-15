@@ -53,7 +53,9 @@ unit HooksMadeEasy.GetMsg;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, HooksMadeEasy.Common;
+  Winapi.Windows, Winapi.Messages;
+
+{$I HooksMadeEasy.GetMsg.Shared.inc}
 
 type
   /// <summary>

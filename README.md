@@ -26,13 +26,16 @@ Recording and playback of a Journal hook. The code can reside inside an EXE or D
 Hooks all messages posted via PostMessage, best is to refine what you need to watch and let the rest flow through.
 The current demo simply posts a message back to the original App when a System Menu is clicked.
 
-## Still to come
-* Remote Inject API
-Injects the DLL into a process using its PID, where a DDetours call
-essentially redirects an API.
-This could be a Hook process specific to lessen load on the system
-when only one process needs to be hooked.
-* more..
+## Inject API
+Injects the DLL into a process using its PID, where a DDetours call essentially redirects an API.  
+This method could use a Hook process specific to a single process to lessen the load on the system.  
+Easiest Way to Test: 
+* Run two instances (same bitness)
+* Copy the PID from the first to the second instances
+* Attach to the first from the second instances
+* Try to terminate the first instance
+  
+[**Requires: Delphi Detours Library**](https://github.com/MahdiSafsafi/DDetours)  
 
 ## See Also
 * [How do I disable driver signature enforcement Win 10](https://answers.microsoft.com/en-us/insider/forum/insider_wintp-insider_devices/how-do-i-disable-driver-signature-enforcement-win/a53ec7ca-bdd3-4f39-a3af-3bd92336d248?auth=1)  

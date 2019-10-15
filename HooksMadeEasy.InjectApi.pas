@@ -22,35 +22,54 @@
   SOFTWARE.
 **********************************************************************************************}
 
-/// <summary>
-///   Helpers and Constants
-/// </summary>
-unit HooksMadeEasy.Common;
+unit HooksMadeEasy.InjectApi;
 
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages;
-
-const
-  MSGFLT_ALLOW    = 1;
-  MSGFLT_DISALLOW = 2;
-  MSGFLT_RESET    = 0;
+  Winapi.Windows, DDetours;
 
 type
- {$MINENUMSIZE 4 DWORD}
- PCHANGEFILTERSTRUCT = ^CHANGEFILTERSTRUCT;
- CHANGEFILTERSTRUCT = record
-  cbSize : DWORD;
-  ExtStatus {DWORD} : (MSGFLTINFO_NONE, MSGFLTINFO_ALREADYALLOWED_FORWND, MSGFLTINFO_ALREADYDISALLOWED_FORWND, MSGFLTINFO_ALLOWED_HIGHER);
-end;
+  TInjectApi = record
+    /// <summary>
+    ///   Uses DDetours to hook TerminateProcess
+    /// </summary>
+    class constructor Create;
+    class destructor Destroy;
+  private
+    type
+      TTerminateProcess = function(hProcess: THandle; uExitCode: UINT): BOOL; stdcall;
+    class var
+      FActive: Boolean;
+      FTerminateProcessTrampo: TTerminateProcess;
+    class function HookedTerminateProcess(hProcess: THandle; uExitCode: UINT): BOOL; static; stdcall;
+  public
+    class property Active: Boolean read FActive;
+  end;
 
-/// <remarks>
-///   Windows 7 and up
-/// </remarks>
-function ChangeWindowMessageFilterEx(hWnd : THandle; Msg : UINT; dwFlag: DWORD; lpChangeFilterStruct : PCHANGEFILTERSTRUCT): BOOL; stdcall; external user32;
 
 implementation
 
+class constructor TInjectApi.Create;
+begin
+  inherited;
+  if FActive then Exit;
+  FActive := True;
+  DisableThreadLibraryCalls(hInstance);
+  @FTerminateProcessTrampo := InterceptCreate(kernel32, 'TerminateProcess', @HookedTerminateProcess);
+end;
+
+class destructor TInjectApi.Destroy;
+begin
+  if not FActive then Exit;
+  FActive := False;
+  InterceptRemove(@FTerminateProcessTrampo);
+end;
+
+class function TInjectApi.HookedTerminateProcess(hProcess: THandle; uExitCode: UINT): BOOL;
+begin
+  MessageBox(0, 'This Hook stops me from closing.', 'Hook.Dll', MB_OK);
+  Result := True;
+end;
 
 end.
