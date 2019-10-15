@@ -26,6 +26,10 @@ Recording and playback of a Journal hook. The code can reside inside an EXE or D
 Hooks all messages posted via PostMessage, best is to refine what you need to watch and let the rest flow through.
 The current demo simply posts a message back to the original App when a System Menu is clicked.
 
+## HooksMadeEasy.Keyboard
+Hooks all GetMessage or PeekMessage functions when there is a keyboard message (WM_KEYUP or WM_KEYDOWN) to be processed.
+The current demo simply posts a message back to the original App when ALT+Numkey_1 is used.
+
 ## Inject API
 Injects the DLL into a process using its PID, where a DDetours call essentially redirects an API.  
 This method could use a Hook process specific to a single process to lessen the load on the system.  
