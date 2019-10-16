@@ -153,16 +153,18 @@ begin
 end;
 
 class function TKeyboardHook.KeyboardProc(iCode: integer; VKCode: WPARAM; lParam: LPARAM): LRESULT;
-var lpKey : TKeyMsgRec absolute lParam;
+var KeyMsg : TKeyMsgRec absolute lParam;
 begin
   Result := 0;
   // Return chained call results if Code is less than Zero
-  if (iCode < 0) then Exit(CallNextHookEx(0, iCode, VKCode, lParam));
-  if not m_HookData.Active or (iCode <> HC_ACTION) then Exit;
+  if (iCode < 0) then Exit(CallNextHookEx(0, iCode, VKCode, lParam))
+  // Else allow processing by Hook chain
+  else CallNextHookEx(0, iCode, VKCode, lParam);
 
-  if (VKCode = VK_NUMPAD1) and (kbALTDWN in lpKey.KeyFlagBits)
+  if not m_HookData.Active or (iCode <> HC_ACTION) then Exit;
+  if (VKCode = VK_NUMPAD1) and (kbALTDWN in KeyMsg.KeyFlagBits)
   then begin
-    if PostMessage(m_HookData.FHwnd, APP_HOOKMSG, Ord(kbPrevKeyState in lpKey.KeyFlagBits), Ord(kbTransitionState in lpKey.KeyFlagBits)) then
+    if PostMessage(m_HookData.FHwnd, APP_HOOKMSG, Ord(kbPrevKeyState in KeyMsg.KeyFlagBits), Ord(kbTransitionState in KeyMsg.KeyFlagBits)) then
       MessageBeep(0);
   end;
 end;

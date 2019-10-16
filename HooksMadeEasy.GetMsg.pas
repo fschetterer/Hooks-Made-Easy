@@ -107,9 +107,11 @@ var lpMsg : PMsg absolute lParam;
 begin
   Result := 0;
   // Return chained call results if Code is less than Zero
-  if (iCode < 0) then Exit(CallNextHookEx(0, iCode, wParam, lParam));
-  if not m_HookData.Active or (iCode <> HC_ACTION) then Exit;
+  if (iCode < 0) then Exit(CallNextHookEx(0, iCode, wParam, lParam))
+  // Else allow processing by Hook chain
+  else CallNextHookEx(0, iCode, wParam, lParam);
 
+  if not m_HookData.Active or (iCode <> HC_ACTION) then Exit;
   if (lpMsg.Message = WM_SYSCOMMAND) then begin
     /// <remarks WM_SYSCOMMAND>
     ///   The four low-order bits of the wParam parameter are used internally by the system.
