@@ -6,7 +6,8 @@ Keep in mind that in some cases both a 32 and 64 bit version of a DLL are requir
 ### DLL code 
 Projects will compile in Delphi XE2 and up. XE2 was chosen since it will compile for both 32 and 64 bit with a small binary footprint.
 ### Test Code and Manifests
-A manifest file is supplied for Delphi Berlin which includes 'uiAccess'. Newer IDEs have this option built in.
+A manifest file is supplied for Delphi Berlin which includes 'uiAccess'. 
+Newer IDEs have this option built in.
 Debugging is best done with a manifest that does not include 'uiAccess'.
 'LinkManifests.cmd' will generate symbolic links to the supplied manifest.
 ### Code Signing
@@ -42,6 +43,7 @@ Easiest Way to Test:
 [**Requires: Delphi Detours Library**](https://github.com/MahdiSafsafi/DDetours)  
 
 ## See Also
+* [SetWindowsHookEx for WH_JOURNALRECORD fails under Vista/Windows 7](https://stackoverflow.com/a/9170182)
 * [How do I disable driver signature enforcement Win 10](https://answers.microsoft.com/en-us/insider/forum/insider_wintp-insider_devices/how-do-i-disable-driver-signature-enforcement-win/a53ec7ca-bdd3-4f39-a3af-3bd92336d248?auth=1)  
 * [Windows, Drivers and Digital Signatures](http://blog.morphisec.com/windows-drivers-and-digital-signatures)  
 * [Driver Signing changes in Windows 10, version 1607](https://blogs.msdn.microsoft.com/windows_hardware_certification/2016/07/26/driver-signing-changes-in-windows-10-version-1607/)

@@ -56,13 +56,13 @@ unit HooksMadeEasy.Journal;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages,
+  Winapi.Windows, Winapi.Messages, Winapi.MMSystem,
   System.SysUtils, System.Classes,
   HooksMadeEasy.Common;
 
 type
   /// <summary>
-  ///  Wrapper around GetTickCount (instead of Winapi.MMSystem.TimeGetTime)
+  ///  Wrapper around Winapi.MMSystem.TimeGetTime
   /// </summary>
   /// <seealso href="https://www.thedelphigeek.com/2007/10/calculating-accurate.html">
   ///    Started with: Calculating accurate 'Now'
@@ -70,6 +70,7 @@ type
   TTicks = record
 {$REGION 'History'}
 //  13-Oct-2019 - This is a class helper in Berlin but works as a record in XE2
+//  18-Oct-2019 - Back to using TimeGetTime for accuracy
 {$ENDREGION}
     class constructor Create;
   private
@@ -242,12 +243,19 @@ var lpMsg : PMsg absolute lParam;
 begin
   Result := 0;
   // Return chained call results if Code is less than Zero
-  if (iCode < 0) then Exit(CallNextHookEx(0, iCode, wParam, lParam));
+  if (iCode < 0) then Exit(CallNextHookEx(0, iCode, wParam, lParam))
+  // Else allow processing by Hook chain
+  else CallNextHookEx(0, iCode, wParam, lParam);
+
   if not FActive or (iCode <> HC_ACTION) then Exit;
   if (lpMsg.Message = WM_CANCELJOURNAL) then Stop;
 end;
 
 class function TJournalHook.SetHooks(const AFileMode: Word; const AHookID: Integer; const AHookProc: TFNHookProc): Boolean;
+{$REGION 'History'}
+//  18-Oct-2019 - Added storing of Error to allow proper display in calling App
+{$ENDREGION}
+var Err : Cardinal;
 begin
   if FActive then Exit(False);
   FActive := True;
@@ -268,9 +276,11 @@ begin
     Result := FHook <> 0;
   finally
     if not Result then begin
+      Err := GetLastError;
       FActive := False;
       UnhookWindowsHookEx(FMsgHook);
       FreeAndNil(FFile);
+      SetLastError(Err);
     end;
   end;
 end;
@@ -315,7 +325,7 @@ end;
 class function TTicks.Now64: Uint64;
 var Rsl : Int64Rec absolute Result;
 begin
-  Rsl.Lo := GetTickCount;
+  Rsl.Lo := TimeGetTime;
   if Rsl.Lo < FNowLastLow32 then Inc(FNowHigh32);
   FNowLastLow32 := Rsl.Lo;
   Rsl.Hi := FNowHigh32;
